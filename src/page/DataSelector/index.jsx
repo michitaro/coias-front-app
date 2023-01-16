@@ -1,5 +1,3 @@
-// /* eslint-disable */
-
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 // eslint-disable-next-line no-unused-vars
 import { angle, easing, Globe, path, SkyCoord } from '@stellar-globe/stellar-globe'
