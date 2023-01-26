@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-import { BeautifulObjectLayer, ConstellationLayer, EsoMilkyWayLayer, Globe, GridLayer, HipparcosCatalogLayer, hips } from "@stellar-globe/stellar-globe"
+import { BeautifulObjectLayer, BillboardText, ConstellationLayer, EsoMilkyWayLayer, Globe, GridLayer, HipparcosCatalogLayer, hips, TextLayer } from "@stellar-globe/stellar-globe"
 import { createElement, Fragment } from "react"
 import { makePureLayerComponent } from "./Globe"
 
@@ -15,6 +15,28 @@ export const HipsSimpleImage = makePureLayerComponent((globe, _: { baseUrl: stri
 
 type BeautifulObjectWhich = ConstructorParameters<typeof BeautifulObjectLayer>[1]
 const BeautifulObject = makePureLayerComponent((globe, { which }: { which: BeautifulObjectWhich }) => new BeautifulObjectLayer(globe, which))
+
+export type CelestialTextProps = {
+  billboardTexts: BillboardText[],
+  defaultFont: string
+  defaultColor: string
+  alpha?: number
+}
+
+export const CelestialText = makePureLayerComponent<CelestialTextProps, TextLayer>(
+  (globe, {
+    billboardTexts,
+    defaultFont,
+    defaultColor,
+    alpha = 1,
+  }: CelestialTextProps) =>
+    new TextLayer(globe,
+      billboardTexts,
+      defaultFont,
+      defaultColor,
+      alpha,
+    )
+)
 
 export function PrettyPictures() {
   return createElement(Fragment, null,

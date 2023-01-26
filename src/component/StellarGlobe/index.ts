@@ -21,6 +21,7 @@ export {
   HipparcosCatalog,
   HipsSimpleImage,
   PrettyPictures,
+  CelestialText,
 } from './layers'
 
 export {
@@ -37,6 +38,10 @@ export {
 export {
   SspData,
 } from './SspData'
+
+export {
+  SspOutline,
+} from './SspOutline'
 
 export {
   ClickablePolygon,

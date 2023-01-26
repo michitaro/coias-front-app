@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 // eslint-disable-next-line no-unused-vars
 import { angle, easing, Globe, path, SkyCoord } from '@stellar-globe/stellar-globe'
 // eslint-disable-next-line import/no-unresolved, import/extensions, no-unused-vars
-import { Constellation, EsoMilkyWay, Grid, HipparcosCatalog, Patch, PatchSelector, Path, PrettyPictures, SspData, StellarGlobe, Tract, TractSelector } from '../../component/StellarGlobe'
+import { CelestialText, Constellation, EsoMilkyWay, Grid, HipparcosCatalog, Patch, PatchSelector, Path, PrettyPictures, SspData, SspOutline, StellarGlobe, Tract, TractSelector } from '../../component/StellarGlobe'
 
 
 function DataSelector() {
@@ -84,11 +84,19 @@ function DataSelector() {
     })
   }, [])
 
-  // eslint-disable-next-line no-unused-vars
-  const sspDataUrl = useMemo(() => {
-    const ssl = window.location.protocol === 'https'
-    return `${ssl ? 'https' : 'http'}://hscmap.mtk.nao.ac.jp/hscMap4/data/pdr3_wide`
-  }, [])
+  // 文字を配置
+  /** @type {import('../../component/StellarGlobe/layers').CelestialTextProps} */
+  const textProp = useMemo(() => ({
+    billboardTexts: [
+      { position: SkyCoord.fromDeg(0, 90).xyz, text: '天の北極' },
+      { position: SkyCoord.fromDeg(0, 0).xyz, text: '春分点', color: 'red' },
+      { position: SkyCoord.fromDeg(180, 0).xyz, text: '秋分点', color: 'green' },
+      { position: SkyCoord.fromDeg(0, -90).xyz, text: '天の南極' },
+    ],
+    defaultColor: 'white',
+    defaultFont: '40px serif', // https://developer.mozilla.org/ja/docs/Web/CSS/font の書式で
+    alpha: 1, // 不透明度
+  }), [])
 
   return (
     <div style={{ display: 'flex', height: '100%' }}>
@@ -99,7 +107,13 @@ function DataSelector() {
           <PrettyPictures />
 
           {/* HSCの画像 */}
-          <SspData baseUrl={sspDataUrl} />
+          <SspData baseUrl='//hscmap.mtk.nao.ac.jp/hscMap4/data/pdr3_wide' outline={false} />
+
+          {/* HSCの画像データの枠 */}
+          <SspOutline
+            url='//hscmap.mtk.nao.ac.jp/hscMap4/data/pdr3_wide/area.json'
+            color={[0, 0.5, 1, 1]}
+          />
 
           {/* 背景の天の川 */}
           <EsoMilkyWay />
@@ -133,6 +147,8 @@ function DataSelector() {
               </>)
             }
           </>)}
+          {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+          <CelestialText {...textProp} />
           {/* <GlobeDebug /> */}
         </StellarGlobe>
         {/* ビューワー関係はここまで */}
