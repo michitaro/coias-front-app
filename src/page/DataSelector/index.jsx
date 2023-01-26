@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 // eslint-disable-next-line no-unused-vars
 import { angle, easing, Globe, path, SkyCoord } from '@stellar-globe/stellar-globe'
 // eslint-disable-next-line import/no-unresolved, import/extensions, no-unused-vars
-import { CelestialText, Constellation, EsoMilkyWay, Grid, HipparcosCatalog, Patch, PatchSelector, Path, PrettyPictures, SspData, SspOutline, StellarGlobe, Tract, TractSelector } from '../../component/StellarGlobe'
+import { CelestialText, Constellation, Ecliptic, EsoMilkyWay, Grid, HipparcosCatalog, Patch, PatchSelector, Path, PrettyPictures, SspData, SspOutline, StellarGlobe, Tract, TractSelector } from '../../component/StellarGlobe'
 
 
 function DataSelector() {
@@ -92,9 +92,11 @@ function DataSelector() {
       { position: SkyCoord.fromDeg(0, 0).xyz, text: '春分点', color: 'red' },
       { position: SkyCoord.fromDeg(180, 0).xyz, text: '秋分点', color: 'green' },
       { position: SkyCoord.fromDeg(0, -90).xyz, text: '天の南極' },
+      { position: SkyCoord.fromDeg(90, 23.4).xyz, text: '黄道', color: 'orange' },
+      { position: SkyCoord.fromDeg(90, 0).xyz, text: '赤道', color: 'red' },
     ],
     defaultColor: 'white',
-    defaultFont: '40px serif', // https://developer.mozilla.org/ja/docs/Web/CSS/font の書式で
+    defaultFont: '25px serif', // https://developer.mozilla.org/ja/docs/Web/CSS/font の書式で
     alpha: 1, // 不透明度
   }), [])
 
@@ -126,6 +128,8 @@ function DataSelector() {
 
           {/* 星座 */}
           <Constellation lang='Hiragana' showNames />
+
+          <Ecliptic />
 
           {/* XYZ軸 */}
           {showAxis && (<Path paths={axisPaths} />)}

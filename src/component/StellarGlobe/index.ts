@@ -44,5 +44,9 @@ export {
 } from './SspOutline'
 
 export {
+  Ecliptic,
+} from './Ecliptic'
+
+export {
   ClickablePolygon,
 } from './ClickablePolygon'
