@@ -31,8 +31,6 @@ function SspOutline({
 
 
 async function loadPaths(url: string, color: V4): Promise<path.Path[]> {
-  console.log(await (await fetch(url)).json())
-
   const { $any: region }: { $any: V3[][] } = await (await fetch(url)).json().catch(e => [])
   const width = 0.01
   const paths: path.Path[] = []
