@@ -20,3 +20,5 @@ export const ClickablePolygon = makePureLayerComponent(
   }: ClickablePolygonProps) =>
     new ClicakblePolygonLayer(globe, polygons, onClick, baseLineWidth, activeLineWidth)
 )
+
+ClickablePolygon.displayName = 'ClickablePolygon'

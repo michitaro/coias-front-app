@@ -43,6 +43,8 @@ export const Tract = React.memo(({ tractId, style, baseLineWidth = 3, activeLine
   return <TractSelector tracts={[tract]} onClick={noop} baseLineWidth={baseLineWidth} activeLineWidth={activeLineWidth} />
 })
 
+Tract.displayName = 'Tract'
+
 
 type PatchProps = {
   tractId: number
@@ -59,6 +61,8 @@ export const Patch = React.memo(({ tractId, patchId, style }: PatchProps) => {
   }
   return <ClickablePolygon polygons={[patch]} onClick={noop} />
 })
+
+Patch.displayName = 'Patch'
 
 
 export type TractSelectorTract = {
@@ -93,6 +97,8 @@ export const TractSelector = React.memo(({
   return <ClickablePolygon polygons={polygons} onClick={nativeOnClick} baseLineWidth={baseLineWidth} activeLineWidth={activeLineWidth} />
 })
 
+TractSelector.displayName = 'TractSelector'
+
 
 export type PatchSelectorProps = {
   tractId: number
@@ -124,6 +130,8 @@ export const PatchSelector = React.memo(({ tractId, defaultStyle, patchStyle = {
   }
   return <ClickablePolygon polygons={polygons} onClick={nativeOnClick} />
 })
+
+PatchSelector.displayName = 'PatchSelector'
 
 
 function tractId2polygon(tractId: number): Polygon {

@@ -50,3 +50,5 @@ export {
 export {
   ClickablePolygon,
 } from './ClickablePolygon'
+
+import './prop-types'

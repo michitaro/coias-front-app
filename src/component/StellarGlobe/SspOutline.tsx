@@ -29,6 +29,8 @@ function SspOutline({
   )
 }
 
+SspOutline.displayName = 'SspOutline'
+
 
 async function loadPaths(url: string, color: V4): Promise<path.Path[]> {
   const { $any: region }: { $any: V3[][] } = await (await fetch(url)).json().catch(e => [])
