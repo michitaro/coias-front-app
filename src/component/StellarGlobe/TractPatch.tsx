@@ -11,10 +11,11 @@
  * yは赤緯の増加とともに増加
  * xは赤経の逆向きに増加
  */
-import { angle, V3, V4 } from '@stellar-globe/stellar-globe'
+import { angle, V3 } from '@stellar-globe/stellar-globe'
 import { mat3, vec3 } from 'gl-matrix'
 import React from 'react'
 import { ClickablePolygon } from './ClickablePolygon'
+import { StyledPolygon } from './ClickablePolygonLayer'
 import { RingsTract } from './RingsTract'
 
 
@@ -23,71 +24,105 @@ const noop = () => { }
 
 
 type Polygon = V3[]
-type Style = Parameters<typeof ClickablePolygon>[0]["style"]
+type Style = StyledPolygon["style"]
 
 
 type TractProps = {
   tractId: number
-  color?: V4
+  style: Style
+  baseLineWidth?: number
+  activeLineWidth?: number
 }
 
 
-export const Tract = React.memo(({ tractId, color }: TractProps) => {
-  const style: Style = {
-    baseColor: color ?? [1, 1, 1, 1],
+export const Tract = React.memo(({ tractId, style, baseLineWidth = 3, activeLineWidth = 3 }: TractProps) => {
+  const tract: TractSelectorTract = {
+    id: tractId,
+    style,
   }
-  return <TractSelector tractIds={[tractId]} onClick={noop} style={style} />
+  return <TractSelector tracts={[tract]} onClick={noop} baseLineWidth={baseLineWidth} activeLineWidth={activeLineWidth} />
 })
 
 
 type PatchProps = {
   tractId: number
   patchId: string
-  color?: V4
+  style: Style
 }
 
 
-export const Patch = React.memo(({ tractId, patchId, color }: PatchProps) => {
+export const Patch = React.memo(({ tractId, patchId, style }: PatchProps) => {
   const [j, i] = patchId.split(',').map(s => Number.parseInt(s)) as [number, number]
-  const polygons = [patchPolygon(tractId, [j, i])]
-  const style: Style = {
-    baseColor: color ?? [1, 0, 0, 1]
+  const patch: StyledPolygon = {
+    polygon: patchPolygon(tractId, [j, i]),
+    style,
   }
-  return <ClickablePolygon polygons={polygons} onClick={noop} style={style} />
+  return <ClickablePolygon polygons={[patch]} onClick={noop} />
 })
 
 
-type TractSelectorProps = {
-  tractIds: number[]
+export type TractSelectorTract = {
+  id: number
   style: Style
+}
+
+
+export type TractSelectorProps = {
+  tracts: TractSelectorTract[]
+  baseLineWidth?: number
+  activeLineWidth?: number
   onClick?: (index: number) => void
 }
 
 
-export const TractSelector = React.memo(({ tractIds, style, onClick = noop }: TractSelectorProps) => {
-  const polygons = tractIds.map(tractId2polygon)
-  const nativeOnClick = (polygonIndex: number) => {
-    onClick(tractIds[polygonIndex])
+export const TractSelector = React.memo(({
+  tracts,
+  baseLineWidth,
+  activeLineWidth,
+  onClick = noop,
+}: TractSelectorProps) => {
+  const polygons = tracts.map(({ id, style }): StyledPolygon => {
+    return {
+      style,
+      polygon: tractId2polygon(id),
+    }
+  })
+  const nativeOnClick = (objectIndex: number) => {
+    onClick(tracts[objectIndex].id)
   }
-  return <ClickablePolygon polygons={polygons} style={style} onClick={nativeOnClick} />
+  return <ClickablePolygon polygons={polygons} onClick={nativeOnClick} baseLineWidth={baseLineWidth} activeLineWidth={activeLineWidth} />
 })
 
 
-type PatchSelectorProps = {
+export type PatchSelectorProps = {
   tractId: number
-  style: Parameters<typeof ClickablePolygon>[0]["style"],
+  defaultStyle: StyledPolygon["style"]
+  patchStyle?: { [patchId: string]: Style | undefined }
   onClick?: (patchId: string) => void
 }
 
 
-export const PatchSelector = React.memo(({ tractId, style, onClick = noop }: PatchSelectorProps) => {
-  const polygons = tractId2patchPolygons(tractId)
-  const nativeOnClick = (polygonIndex: number) => {
-    const j = polygonIndex % nPatchesRA
-    const i = Math.floor(polygonIndex / nPatchesDec)
-    onClick(`${j},${i}`)
+export function patchId({ j, i }: { j: number, i: number }) {
+  return `${j},${i}`
+}
+
+
+export const PatchSelector = React.memo(({ tractId, defaultStyle, patchStyle = {}, onClick = noop }: PatchSelectorProps) => {
+  const polygons: StyledPolygon[] = []
+  for (let i = 0; i < nPatchesDec; ++i) {  // 赤緯方向
+    for (let j = 0; j < nPatchesRA; ++j) {  // 赤経方向
+      polygons.push({
+        style: patchStyle[patchId({ j, i })] ?? defaultStyle,
+        polygon: patchPolygon(tractId, [j, i])
+      })
+    }
   }
-  return <ClickablePolygon polygons={polygons} style={style} onClick={nativeOnClick} />
+  const nativeOnClick = (objectIndex: number) => {
+    const j = objectIndex % nPatchesRA
+    const i = Math.floor(objectIndex / nPatchesDec)
+    onClick(patchId({ j, i }))
+  }
+  return <ClickablePolygon polygons={polygons} onClick={nativeOnClick} />
 })
 
 
@@ -113,16 +148,6 @@ function tractId2polygon(tractId: number): Polygon {
 const nPatchesDec = 10
 const nPatchesRA = 10
 
-
-function tractId2patchPolygons(tractId: number) {
-  const polygons: Polygon[] = []
-  for (let i = 0; i < nPatchesDec; ++i) {  // 赤緯方向
-    for (let j = 0; j < nPatchesRA; ++j) {  // 赤経方向
-      polygons.push(patchPolygon(tractId, [j, i]))
-    }
-  }
-  return polygons
-}
 
 
 function patchPolygon(tractId: number, patchId: [number, number]): Polygon {

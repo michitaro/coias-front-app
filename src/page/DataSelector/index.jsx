@@ -1,8 +1,9 @@
+/* eslint-disable no-unused-vars */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 // eslint-disable-next-line no-unused-vars
 import { angle, easing, Globe, path, SkyCoord } from '@stellar-globe/stellar-globe'
 // eslint-disable-next-line import/no-unresolved, import/extensions, no-unused-vars
-import { CelestialText, Constellation, Ecliptic, EsoMilkyWay, Grid, HipparcosCatalog, Patch, PatchSelector, Path, PrettyPictures, SspData, SspOutline, StellarGlobe, Tract, TractSelector } from '../../component/StellarGlobe'
+import { CelestialText, Constellation, Ecliptic, EsoMilkyWay, Grid, HipparcosCatalog, Path, PrettyPictures, SspData, SspOutline, StellarGlobe, Tract, TractSelector, PatchSelector, Patch } from '../../component/StellarGlobe'
 
 
 function DataSelector() {
@@ -43,20 +44,57 @@ function DataSelector() {
 
   // tract, patct関係
   const [showTract, setShowTract] = useState(true)
-  const tractIds = useMemo(() => [9470, 9471, 9472, 8742, 10675], [])
-  const [selectedTractId, setSelectedTractId] = useState(undefined)
-  const [selectedPatchId, setSelectedPatchId] = useState(undefined)
-  const tractStyle = useMemo(() => ({
+
+  const defaultStyle = useMemo(() => ({
     baseColor: [0, 1, 1, 0.25], // 青緑
-    hoverColor: [0, 1, 0, 0.5], // 緑
+    hoverColor: [0, 1, 1, 1], // 青緑
     activeColor: [1, 0, 0, 1], // 赤
   }), [])
-  const selectedColor = useMemo(() => [1, 0, 1, 1])
+
+  const tracts = useMemo(() =>
+    [9470, 9471, 9472, 9473, 9474, 8742, 10675].map(tractId => {
+      /** @type {import('../../component/StellarGlobe/TractPatch').TractSelectorTract} */
+      const tractDef = {
+        id: tractId,
+        style: {
+          ...defaultStyle,
+          baseColor: [[0.75, 0.25, 0, 0.75], [0, 1, 0, 0.75], [0, 0.5, 0.5, 0.75]][tractId % 3],
+          // tractIdを3で割ったあまりで橙,緑,青緑を切り替え
+        }
+      }
+      return tractDef
+    }),
+    [],
+  )
+
+  const [selectedTractId, setSelectedTractId] = useState(undefined)
+  const [selectedPatchId, setSelectedPatchId] = useState(undefined)
+
+  const selectedStyle = useMemo(() => ({
+    baseColor: [1, 0, 1, 1],
+  }), [])
+
   const tractOnClick = useCallback((tractIndex) => {
     setSelectedTractId(tractIndex)
   }, [])
   const patchOnClick = useCallback((patchId) => {
     setSelectedPatchId(patchId)
+  }, [])
+
+  const rainbowPatch = useMemo(() => {
+    /** @type {import('../../component/StellarGlobe/TractPatch').PatchSelectorProps["patchStyle"]} */
+    const patchStyle = {}
+    for (let j = 0; j < 9; j += 1) {
+      for (let i = 0; i < 9; i += 1) {
+        const patchId = `${j},${i}`
+        patchStyle[patchId] = {
+          baseColor: [j / 8, i / 8, 1, 0.5],
+          activeColor: [1, 0, 0, 1],
+          hoverColor: [j / 8, i / 8, 1, 1]
+        }
+      }
+    }
+    return patchStyle
   }, [])
 
   // xyz軸表示
@@ -137,23 +175,22 @@ function DataSelector() {
           {/* Tract, Patch枠関係 */}
           {showTract && (<>
             {/* Tract選択肢 */}
-            <TractSelector tractIds={tractIds} style={tractStyle} onClick={tractOnClick} />
+            <TractSelector tracts={tracts} onClick={tractOnClick} />
             {
               selectedTractId !== undefined && (<>
                 {/* Tractがどれか選択されていたら選択中のTractを強調表示 */}
-                <Tract tractId={selectedTractId} color={selectedColor} />
+                <Tract tractId={selectedTractId} style={selectedStyle} baseLineWidth={7} />
                 {/* Patch選択肢 */}
-                <PatchSelector tractId={selectedTractId} style={tractStyle} onClick={patchOnClick} />
+                <PatchSelector tractId={selectedTractId} defaultStyle={defaultStyle} patchStyle={rainbowPatch} onClick={patchOnClick} />
                 {selectedPatchId !== undefined &&
                   // Patchがどれか選択されていたら選択中のPatchを強調表示
-                  <Patch tractId={selectedTractId} patchId={selectedPatchId} color={selectedColor} />
+                  <Patch tractId={selectedTractId} patchId={selectedPatchId} style={selectedStyle} />
                 }
               </>)
             }
           </>)}
           {/* eslint-disable-next-line react/jsx-props-no-spreading */}
           <CelestialText {...textProp} />
-          {/* <GlobeDebug /> */}
         </StellarGlobe>
         {/* ビューワー関係はここまで */}
       </div>
