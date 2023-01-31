@@ -153,8 +153,8 @@ function tractId2polygon(tractId: number): Polygon {
 }
 
 
-const nPatchesDec = 10
-const nPatchesRA = 10
+const nPatchesDec = 9
+const nPatchesRA = 9
 
 
 
