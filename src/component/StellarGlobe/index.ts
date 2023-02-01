@@ -5,14 +5,13 @@
  * 基本的に触る必要はないはず。
  */
 
-
 export {
   StellarGlobe,
   useGlobe,
   useGlobeLocation,
   useGlobeReady,
   GlobeDebug,
-} from './Globe'
+} from './Globe';
 
 export {
   Constellation,
@@ -22,33 +21,18 @@ export {
   HipsSimpleImage,
   PrettyPictures,
   CelestialText,
-} from './layers'
+} from './layers';
 
-export {
-  Path,
-} from './path'
+export { Path } from './path';
 
-export {
-  Tract,
-  Patch,
-  TractSelector,
-  PatchSelector,
-} from './TractPatch'
+export { Tract, Patch, TractSelector, PatchSelector } from './TractPatch';
 
-export {
-  SspData,
-} from './SspData'
+export { SspData } from './SspData';
 
-export {
-  SspOutline,
-} from './SspOutline'
+export { SspOutline } from './SspOutline';
 
-export {
-  Ecliptic,
-} from './Ecliptic'
+export { Ecliptic } from './Ecliptic';
 
-export {
-  ClickablePolygon,
-} from './ClickablePolygon'
+export { ClickablePolygon } from './ClickablePolygon';
 
-import './prop-types'
+import './prop-types';
