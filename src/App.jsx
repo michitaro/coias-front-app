@@ -24,6 +24,7 @@ import FinalCheck from './page/FinalCheck';
 import Report from './page/Report';
 import './style/style.scss';
 import DataSelector from './page/DataSelector';
+import StellarGlobeExample from './page/StellarGlobeExample';
 
 function App() {
   const [currentPage, setCurrentPage] = useState(0);
@@ -125,6 +126,12 @@ function App() {
                   value={predictedStarValue}
                 >
                   <Routes>
+                    {process.env.NODE_ENV === 'development' && (
+                      <Route
+                        path="/stellar-globe-example"
+                        element={<StellarGlobeExample />}
+                      />
+                    )}
                     <Route
                       path="/"
                       element={<DataSelector setFileNames={setFileNames} />}
