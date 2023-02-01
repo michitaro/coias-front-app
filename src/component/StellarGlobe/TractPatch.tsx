@@ -151,12 +151,17 @@ export const PatchSelector = React.memo(
 
 PatchSelector.displayName = 'PatchSelector';
 
-function tractId2polygon(tractId: number): Polygon {
+type TractId2polygonOptions = {
+  tractSize?: number; // tract size in radian
+};
+
+function tractId2polygon(
+  tractId: number,
+  { tractSize = angle.deg2rad(1.68) }: TractId2polygonOptions = {},
+): Polygon {
   const [a, d] = ringsTract.index2ad(tractId);
   const m = rotate(a, d);
-  const pixelScale = 0.168; // arcsec / pixel
-  const tractSize = 36000; // in pixels
-  const s = 0.5 * tractSize * angle.deg2rad(pixelScale / 3600); // half tract size
+  const s = tractSize / 2;
   const v0: V3 = [1, -s, -s];
   const v1: V3 = [1, -s, +s];
   const v2: V3 = [1, +s, +s];
