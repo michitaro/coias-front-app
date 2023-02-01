@@ -60,28 +60,28 @@ export class ClicakblePolygonLayer extends Layer {
       this.basePathRenderer.release();
     });
     this.basePathRenderer.setPaths(
-      polygons.map((o) => ({
+      polygons.map((p) => ({
         close: true,
         joint: path.JOINT.MITER,
-        points: o.polygon.map((position) => ({
-          color: o.style.baseColor,
+        points: p.polygon.map((position) => ({
+          color: p.style.baseColor,
           position,
           size: 0,
         })),
       })),
     );
-    for (const o of polygons) {
-      const color = o.style.baseFillColor ?? dim(o.style.baseColor, 0.25);
+    for (const p of polygons) {
+      const color = p.style.baseFillColor ?? dim(p.style.baseColor, 0.25);
       this.baseFillRenderer.addStrips(
         [0, 1, 3, 2].map((i) => ({
-          position: o.polygon[i],
+          position: p.polygon[i],
           color,
         })),
       );
     }
     this.baseFillRenderer;
     this.mousePickers = polygons.map(
-      (o, index) => new PolygonMousePicker(this, index, o.polygon),
+      (p, index) => new PolygonMousePicker(this, index, p.polygon),
     );
   }
 
