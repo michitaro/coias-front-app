@@ -172,15 +172,23 @@ function tractId2polygon(tractId: number): Polygon {
 const nPatchesDec = 9;
 const nPatchesRA = 9;
 
-function patchPolygon(tractId: number, patchId: [number, number]): Polygon {
+type PatchPolygonOptions = {
+  paddingRatio?: number;
+};
+
+function patchPolygon(
+  tractId: number,
+  patchId: [number, number],
+  { paddingRatio = 0 }: PatchPolygonOptions = {},
+): Polygon {
   const [j, i] = patchId;
   const [t10, _t11, t01, t00] = tractId2polygon(tractId);
-  const y0 = i / nPatchesDec;
-  const y1 = (i + 1) / nPatchesDec;
+  const y0 = (i + paddingRatio) / nPatchesDec;
+  const y1 = (i + 1 - paddingRatio) / nPatchesDec;
   // t00 + x * (t10 - t00) + y * (t01 - t00)
   // == (1 - x - y) * t00 + x * t10 + y * t01
-  const x0 = j / nPatchesRA;
-  const x1 = (j + 1) / nPatchesRA;
+  const x0 = (j + paddingRatio) / nPatchesRA;
+  const x1 = (j + 1 - paddingRatio) / nPatchesRA;
   const patchCorners = [
     [x0, y0],
     [x1, y0],
