@@ -115,10 +115,11 @@ export type PatchSelectorProps = {
   tractId: number;
   defaultStyle: StyledPolygon['style'];
   patchStyle?: { [patchId: string]: Style | undefined };
+  validPatchIds: number[][];
   onClick?: (patchId: string) => void;
 };
 
-export function patchId({ j, i }: { j: number; i: number }) {
+function makePatchId({ j, i }: { j: number; i: number }) {
   return `${j},${i}`;
 }
 
@@ -127,23 +128,24 @@ export const PatchSelector = React.memo(
     tractId,
     defaultStyle,
     patchStyle = {},
+    validPatchIds,
     onClick = noop,
   }: PatchSelectorProps) => {
     const polygons: StyledPolygon[] = [];
-    for (let i = 0; i < nPatchesDec; ++i) {
-      // 赤緯方向
-      for (let j = 0; j < nPatchesRA; ++j) {
-        // 赤経方向
-        polygons.push({
-          style: patchStyle[patchId({ j, i })] ?? defaultStyle,
-          polygon: patchPolygon(tractId, [j, i]),
-        });
-      }
-    }
+    const index2patchId = new Map<number, string>();
+    validPatchIds.map((validPatchId, index) => {
+      const j = validPatchId[0];
+      const i = validPatchId[1];
+      const patchId = makePatchId({ j, i });
+      polygons.push({
+        style: patchStyle[patchId] ?? defaultStyle,
+        polygon: patchPolygon(tractId, [j, i]),
+      });
+      index2patchId.set(index, patchId);
+    });
     const nativeOnClick = (objectIndex: number) => {
-      const j = objectIndex % nPatchesRA;
-      const i = Math.floor(objectIndex / nPatchesDec);
-      onClick(patchId({ j, i }));
+      const patchId = index2patchId.get(objectIndex)!;
+      onClick(patchId);
     };
     return <ClickablePolygon polygons={polygons} onClick={nativeOnClick} />;
   },

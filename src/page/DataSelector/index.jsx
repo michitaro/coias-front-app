@@ -144,6 +144,20 @@ function DataSelector() {
     return patchStyle;
   }, []);
 
+  const validPatchIds = useMemo(() => {
+    const patchIds = [];
+    let k = 0;
+    for (let i = 0; i < 9; i += 1) {
+      for (let j = 0; j < 9; j += 1) {
+        if (k % 4 === 0) {
+          patchIds.push([j, i]);
+        }
+        k += 1;
+      }
+    }
+    return patchIds;
+  }, []);
+
   // xyz軸表示
   const [showAxis, setShowAxis] = useState(true);
   // eslint-disable-next-line no-use-before-define
@@ -257,6 +271,7 @@ function DataSelector() {
                     tractId={selectedTractId}
                     defaultStyle={defaultStyle}
                     patchStyle={rainbowPatch}
+                    validPatchIds={validPatchIds}
                     onClick={patchOnClick}
                   />
                   {selectedPatchId !== undefined && (

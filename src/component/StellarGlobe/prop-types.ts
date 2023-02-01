@@ -135,6 +135,9 @@ PatchSelector.propTypes = {
   tractId: PropTypes.number.isRequired,
   defaultStyle: StyleType.isRequired,
   patchStyle: PropTypes.objectOf(StyleType),
+  validPatchIds: PropTypes.arrayOf(
+    PropTypes.arrayOf(PropTypes.number).isRequired,
+  ).isRequired,
   onClick: PropTypes.func,
 };
 
