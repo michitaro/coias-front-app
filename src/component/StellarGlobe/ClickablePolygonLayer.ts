@@ -4,7 +4,9 @@ import {
   GlobePointerEvent,
   Layer,
   MousePicker,
+  overlayAlpha,
   path,
+  triangleStrip,
   V3,
   V4,
   View,
@@ -17,6 +19,7 @@ type Style = {
   baseColor: V4;
   activeColor?: V4;
   hoverColor?: V4;
+  baseFillColor?: V4;
 };
 
 export type StyledPolygon = {
@@ -26,6 +29,7 @@ export type StyledPolygon = {
 
 export class ClicakblePolygonLayer extends Layer {
   private basePathRenderer: path.Renderer;
+  private baseFillRenderer: triangleStrip.Renderer;
   private activePathRenderer: path.Renderer;
 
   constructor(
@@ -47,7 +51,11 @@ export class ClicakblePolygonLayer extends Layer {
       1.5 * activeLineWidth * globe.camera.canvasPixels;
     this.activePathRenderer.blendMode = path.BlendMode.NORMAL;
 
+    this.baseFillRenderer = new triangleStrip.Renderer(globe.gl);
+    this.baseFillRenderer.blendMode = triangleStrip.BlendMode.NORMAL;
+
     this.onRelease(() => {
+      this.baseFillRenderer.release();
       this.activePathRenderer.release();
       this.basePathRenderer.release();
     });
@@ -62,12 +70,24 @@ export class ClicakblePolygonLayer extends Layer {
         })),
       })),
     );
+    for (const o of polygons) {
+      const color = o.style.baseFillColor ?? dim(o.style.baseColor, 0.25);
+      this.baseFillRenderer.addStrips(
+        [0, 1, 3, 2].map((i) => ({
+          position: o.polygon[i],
+          color,
+        })),
+      );
+    }
+    this.baseFillRenderer;
     this.mousePickers = polygons.map(
       (o, index) => new PolygonMousePicker(this, index, o.polygon),
     );
   }
 
   render(view: View): void {
+    const fillAlpha = overlayAlpha(view);
+    this.baseFillRenderer.render(view, fillAlpha);
     this.basePathRenderer.render(view);
     this.activePathRenderer.render(view);
   }
@@ -209,4 +229,10 @@ function checkTriangleIntersectPoint(a: V3, b: V3, c: V3, xyz: V3): boolean {
   return (
     0 <= v[0] && v[0] <= 1 && 0 <= v[1] && v[1] <= 1 && 0 <= v[2] && v[2] <= 1
   );
+}
+
+function dim(color: V4, ratio: number) {
+  color = [...color];
+  color[3] *= ratio;
+  return color;
 }
