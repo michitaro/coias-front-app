@@ -15,8 +15,8 @@ export const ClickablePolygon = makePureLayerComponent(
     {
       polygons,
       onClick,
-      baseLineWidth = 3,
-      activeLineWidth = 5,
+      baseLineWidth = 5,
+      activeLineWidth = 8,
     }: ClickablePolygonProps,
   ) =>
     new ClicakblePolygonLayer(

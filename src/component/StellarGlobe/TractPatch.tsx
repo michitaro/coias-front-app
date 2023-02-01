@@ -157,7 +157,7 @@ type TractId2polygonOptions = {
 
 function tractId2polygon(
   tractId: number,
-  { tractSize = angle.deg2rad(1.68) }: TractId2polygonOptions = {},
+  { tractSize = angle.deg2rad(1.456) }: TractId2polygonOptions = {},
 ): Polygon {
   const [a, d] = ringsTract.index2ad(tractId);
   const m = rotate(a, d);
@@ -184,7 +184,7 @@ type PatchPolygonOptions = {
 function patchPolygon(
   tractId: number,
   patchId: [number, number],
-  { paddingRatio = 0 }: PatchPolygonOptions = {},
+  { paddingRatio = 0.05 }: PatchPolygonOptions = {},
 ): Polygon {
   const [j, i] = patchId;
   const [t10, _t11, t01, t00] = tractId2polygon(tractId);
