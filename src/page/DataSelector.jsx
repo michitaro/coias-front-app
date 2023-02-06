@@ -174,13 +174,6 @@ function DataSelector({ setFileNames }) {
     return patchStyle;
   }, [validPatchProgresses]);
 
-  // eslint-disable-next-line no-unused-vars
-  const sspDataUrl = useMemo(() => {
-    const ssl = window.location.protocol === 'https';
-    return `${
-      ssl ? 'https' : 'http'
-    }://hscmap.mtk.nao.ac.jp/hscMap4/data/pdr3_wide`;
-  }, []);
   // ----------------------------------------------------------------------------
 
   const REGION_NAMES = ['', '画像領域1', '画像領域2', '画像領域3'];
@@ -755,7 +748,8 @@ function DataSelector({ setFileNames }) {
           <PrettyPictures />
 
           {/* HSCの画像 */}
-          <SspData baseUrl={sspDataUrl} outline={false} />
+          <SspData baseUrl='//hscmap.mtk.nao.ac.jp/hscMap4/data/pdr3_wide' outline={false} />
+          <SspData baseUrl='//hscmap.mtk.nao.ac.jp/hscMap4/data/pdr3_dud' outline={false} />
 
           {/* 背景の天の川 */}
           <EsoMilkyWay />
@@ -778,6 +772,10 @@ function DataSelector({ setFileNames }) {
               {/* HSCの画像データの枠 */}
               <SspOutline
                 url="//hscmap.mtk.nao.ac.jp/hscMap4/data/pdr3_wide/area.json"
+                color={[0, 1, 1, 0.5]}
+              />
+              <SspOutline
+                url="//hscmap.mtk.nao.ac.jp/hscMap4/data/pdr3_dud/area.json"
                 color={[0, 1, 1, 0.5]}
               />
 
